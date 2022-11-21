@@ -21,6 +21,12 @@ public class Route {
        addDestination(destination,price);
     }
 
+    public Route(Route routeToCopy){
+        this.route = new ArrayList<>(routeToCopy.getRoute());
+        this.price = routeToCopy.getPrice();
+    }
+
+
     public void addDestination(City destination, int price){
         route.add(destination);
         this.price += price;
@@ -33,4 +39,6 @@ public class Route {
     public int getPrice() {
         return price;
     }
+
+
 }

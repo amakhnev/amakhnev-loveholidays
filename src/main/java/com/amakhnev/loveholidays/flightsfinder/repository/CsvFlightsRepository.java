@@ -46,7 +46,7 @@ public class CsvFlightsRepository implements FlightsRepository {
             loadData();
         }
         City city = new City(name);
-        if (cities.indexOf(city)>0){
+        if (cities.contains(city)){
             return Optional.of(city);
         }
         return Optional.empty();
