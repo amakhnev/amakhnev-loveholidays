@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CsvFlightsRepository implements FlightsRepository {
@@ -40,11 +41,15 @@ public class CsvFlightsRepository implements FlightsRepository {
     }
 
     @Override
-    public City getCity(String name) throws FlightsFinderException {
+    public Optional<City> getCity(String name) throws FlightsFinderException {
         if (!loaded) {
             loadData();
         }
-        return null;
+        City city = new City(name);
+        if (cities.indexOf(city)>0){
+            return Optional.of(city);
+        }
+        return Optional.empty();
     }
 
     @Override

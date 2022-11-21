@@ -1,5 +1,6 @@
 package com.amakhnev.loveholidays.flightsfinder.service;
 
+import com.amakhnev.loveholidays.flightsfinder.entity.City;
 import com.amakhnev.loveholidays.flightsfinder.entity.Route;
 import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException;
 import com.amakhnev.loveholidays.flightsfinder.repository.FlightsRepository;
@@ -14,7 +15,7 @@ public class FlightsFinderService {
         this.repository = repository;
     }
 
-    public List<Route> getRoutes(String originString, String destinationString) throws FlightsFinderException {
+    public List<Route> getRoutes(City origin, City destination) throws FlightsFinderException {
         return null;
     }
 
