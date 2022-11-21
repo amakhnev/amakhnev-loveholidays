@@ -2,6 +2,7 @@ package com.amakhnev.loveholidays.flightsfinder.repository;
 
 import com.amakhnev.loveholidays.flightsfinder.entity.City;
 import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException;
+import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderExceptionEnum;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,9 +12,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class CsvFlightsRepository implements FlightsRepository{
-
-    public static int ERROR_IO_CODE = 1000;
-    public static String ERROR_IO_MESSAGE = "unable to open flights configuration file";
 
 
     private final String fileName;
@@ -50,7 +48,7 @@ public class CsvFlightsRepository implements FlightsRepository{
 
             lines = new BufferedReader(new InputStreamReader(inputStream)).lines();
         } catch (Exception e) {
-            throw new FlightsFinderException(ERROR_IO_CODE,ERROR_IO_MESSAGE);
+            throw new FlightsFinderException(FlightsFinderExceptionEnum.SERVICE_GENERIC);
         }
         lines.forEach(s -> System.out.println(s));
         loaded = true;

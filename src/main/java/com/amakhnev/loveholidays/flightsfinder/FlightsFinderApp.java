@@ -1,8 +1,9 @@
 package com.amakhnev.loveholidays.flightsfinder;
 
-import com.amakhnev.loveholidays.flightsfinder.entity.City;
+
 import com.amakhnev.loveholidays.flightsfinder.entity.Route;
 import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException;
+import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderExceptionEnum;
 import com.amakhnev.loveholidays.flightsfinder.repository.CsvFlightsRepository;
 import com.amakhnev.loveholidays.flightsfinder.repository.FlightsRepository;
 import com.amakhnev.loveholidays.flightsfinder.service.FlightsFinderService;
@@ -33,7 +34,7 @@ public class FlightsFinderApp {
     protected void process(FlightsFinderService service , String[] args, Writer output) throws IOException {
 
         if (args.length != 2) {
-            output.write(String.format(ERROR_TEXT_TEMPLATE, 100, "Wrong number of arguments"));
+            output.write(String.format(ERROR_TEXT_TEMPLATE, FlightsFinderExceptionEnum.APP_WRONG_ARGS.getCode(), FlightsFinderExceptionEnum.APP_WRONG_ARGS.getMessage()));
             output.flush();
             return;
         }
@@ -42,15 +43,15 @@ public class FlightsFinderApp {
 
         try {
 
-            List<Route> routes = service.getRoutes();
+            List<Route> routes = service.getRoutes(args[0],args[1]);
 
             if (routes == null || routes.size()==0){
-                output.write(String.format(ERROR_TEXT_TEMPLATE, 101, "No routes are returned"));
+                output.write(String.format(ERROR_TEXT_TEMPLATE, FlightsFinderExceptionEnum.APP_NO_ROUTES.getCode(), FlightsFinderExceptionEnum.APP_NO_ROUTES.getMessage()));
                 output.flush();
                 return;
             }
 
-            for (Route r : routes) {
+            for (Route route : routes) {
 
             }
 
