@@ -46,3 +46,44 @@ A few notes on the test:
 * We don’t mind what programming language you use
 * We value simple systems that are easy to communicate and understand
 
+## Additional assumptions
+- input data needs to be validated, i.e. city name should present in corresponding DAO
+- in case of any error only code and meaningful message should be shown to user
+- no path found is an error
+- price is integer
+
+## Solution description
+
+### Architecture and decisions explained
+Application consists of follow layers:
+- FlightsFinderApp - command line application which receives input data as parameters / writes output to system console and handles received checked exceptions.
+- 
+- Original problem does not sound complex, hence decision was made to complete without using of dependency injection frameworks, i.e. Spring. However even on this small project it's evident DI framework would benefit in better wiring (between usage of service bean, factory can be simplified) so if I would do it again I prefer to use Spring.
+
+### How to build
+Open project in IDE of choice as Java Maven project, execute maven `package` goal.
+
+Alternatively with maven installed,go to project folder and execute `mvn package` command
+
+This would trigger tests and creation of flightsfinder-1.0-SNAPSHOT.jar file in {project home}/target directory
+
+### How to run
+####prerequisites:
+* JRE installed, version 11+. Can check with running `java --version`
+* flightsfinder-1.0-SNAPSHOT.jar has been created (see previous section) 
+
+####execution:
+App can be triggered by executing follow command (Windows) 
+```
+./list-flight-paths.cmd "[location1]" "[location2]"
+```
+
+Alternatively, follow command can be triggered to call app explicitly
+```
+java -cp .\target\flightsfinder-1.0-SNAPSHOT.jar com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp {name of departure city} {name of destination city}
+```
+####running from IDE
+Execute method main in `com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp` class, adding list of cities as input parameters in the running configuration
+
+
+
