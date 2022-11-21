@@ -78,5 +78,49 @@ class CsvFlightsRepositoryTest {
 
     }
 
+    @Test
+    void whenCityIsNotLast_thenDestinationsShouldBeReturned() throws Exception {
+
+        List<City> destinations = repository.getDestinations(new City("City 1"));
+
+        assertEquals(3, destinations.size());
+        for (int i=0; i<3; i++){
+            assertEquals("City "+(i+2),destinations.get(i).getName());
+        }
+
+    }
+
+
+    @Test
+    void whenCityIsLast_thenNoDestinationsShouldBeReturned() throws Exception {
+
+        List<City> destinations = repository.getDestinations(new City("City 4"));
+        assertEquals(0, destinations.size());
+
+    }
+
+    @Test
+    void whenOriginIsTheSameAsDestination_thenErrorShouldBeRaised() {
+
+        FlightsFinderException exception = assertThrows(FlightsFinderException.class, () -> repository.getPrice(new City("City 1"),new City("City 1")));
+
+        assertEquals(FlightsFinderExceptionEnum.REPO_WRONG_ARGS.getCode(), exception.getCode());
+        assertEquals(FlightsFinderExceptionEnum.REPO_WRONG_ARGS.getMessage(), exception.getMessage());
+
+
+        exception = assertThrows(FlightsFinderException.class, () -> repository.getPrice(new City("City 2"),new City("City 1")));
+
+        assertEquals(FlightsFinderExceptionEnum.REPO_WRONG_ARGS.getCode(), exception.getCode());
+        assertEquals(FlightsFinderExceptionEnum.REPO_WRONG_ARGS.getMessage(), exception.getMessage());
+
+
+    }
+
+    @Test
+    void whenAllArgsAreCorrect_thenPriceShouldBeFound() throws Exception {
+
+        assertEquals(15, repository.getPrice(new City("City 1"),new City("City 2")));
+
+    }
 
 }

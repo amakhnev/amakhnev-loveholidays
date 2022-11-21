@@ -47,6 +47,28 @@ public class CsvFlightsRepository implements FlightsRepository {
         return null;
     }
 
+    @Override
+    public List<City> getDestinations(City origin) throws FlightsFinderException {
+        if (!loaded) {
+            loadData();
+        }
+        return cities.stream()
+                    .skip(cities.indexOf(origin)+1)
+                    .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getPrice(City origin, City destination) throws FlightsFinderException {
+        if (!loaded) {
+            loadData();
+        }
+
+        if (cities.indexOf(origin) >= cities.indexOf(destination)){
+            throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_ARGS);
+        }
+        return prices[cities.indexOf(origin)][cities.indexOf(destination)];
+    }
+
     private void loadData() throws FlightsFinderException {
 
 
@@ -82,8 +104,14 @@ public class CsvFlightsRepository implements FlightsRepository {
                 if (flightsStr.length != cities.size()){
                     throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
                 }
-                for (int j=0; j< flightsStr.length; j++)
-                    this.prices[i-1][j] = Integer.parseInt(flightsStr[j].trim());
+                for (int j=0; j< flightsStr.length; j++){
+                    try {
+                        this.prices[i-1][j] = Integer.parseInt(flightsStr[j].trim());
+                    } catch (NumberFormatException e) {
+                        throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
+                    }
+                }
+
             }
 
 

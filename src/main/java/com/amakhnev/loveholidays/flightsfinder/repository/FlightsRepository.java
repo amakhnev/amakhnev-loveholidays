@@ -11,5 +11,7 @@ public interface FlightsRepository {
 
     City getCity(String name) throws FlightsFinderException;
 
+    List<City> getDestinations(City origin) throws FlightsFinderException;
 
+    int getPrice(City origin, City destination) throws FlightsFinderException;
 }

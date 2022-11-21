@@ -7,7 +7,9 @@ public enum FlightsFinderExceptionEnum {
 
     REPO_IO(201,"Unable to access flight repository"),
     REPO_NO_HEADER(202,"No header found"),
-    REPO_WRONG_LINES(203,"Wrong flight lines found");
+    REPO_WRONG_LINES(203,"Wrong flight lines found"),
+
+    REPO_WRONG_ARGS(204,"Invalid arguments");
 
 
     final String message;
