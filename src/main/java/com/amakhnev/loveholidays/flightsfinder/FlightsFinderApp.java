@@ -8,7 +8,6 @@ import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException
 import com.amakhnev.loveholidays.flightsfinder.repository.CsvFlightsRepository;
 import com.amakhnev.loveholidays.flightsfinder.repository.FlightsRepository;
 import com.amakhnev.loveholidays.flightsfinder.service.FlightsFinderService;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -25,7 +24,6 @@ public class FlightsFinderApp {
     }
 
     public static final String ERROR_TEXT_TEMPLATE = "Error happened, code: %s, message: %s.";
-
 
 
     protected void process(String[] args, Writer output) throws IOException {
@@ -57,8 +55,6 @@ public class FlightsFinderApp {
             }
 
             for (Route route : routes) {
-
-
                 output.write(route.getRoute().stream().map(City::getName).collect(Collectors.joining(" -> ")));
                 output.write(": "+route.getPrice());
                 output.write(System.lineSeparator());

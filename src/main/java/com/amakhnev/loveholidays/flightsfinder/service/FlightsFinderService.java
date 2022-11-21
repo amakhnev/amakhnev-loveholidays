@@ -23,7 +23,7 @@ public class FlightsFinderService {
 
         getRoutesFor(routes,new Route(origin),destination);
 
-        routes.sort(Comparator.comparingInt(r -> r.getRoute().size()));
+        routes.sort(Comparator.comparingInt(Route::getPrice));
 
         return routes;
     }

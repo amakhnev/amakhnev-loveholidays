@@ -51,6 +51,8 @@ A few notes on the test:
 - in case of any error only code and meaningful message should be shown to user
 - no path found is an error
 - price is integer
+- routes output is sorted by price
+
 
 ## Solution description
 

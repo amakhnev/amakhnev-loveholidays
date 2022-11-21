@@ -41,7 +41,7 @@ class FlightsFinderServiceTest {
     }
 
     @Test
-    void whenTwoDifferentRoutesAvailable_whenTwoRouteShouldBeReturned() throws Exception{
+    void whenTwoDifferentRoutesAvailable_whenTwoRouteShouldBeReturnedCheapestFirst() throws Exception{
         origin = repository.getCity("City 2").orElseThrow();
         destination = repository.getCity("City 4").orElseThrow();
 

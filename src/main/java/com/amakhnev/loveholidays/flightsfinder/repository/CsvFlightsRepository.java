@@ -3,7 +3,6 @@ package com.amakhnev.loveholidays.flightsfinder.repository;
 import com.amakhnev.loveholidays.flightsfinder.entity.City;
 import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException;
 import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderExceptionEnum;
-import com.opencsv.CSVParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,8 +21,6 @@ public class CsvFlightsRepository implements FlightsRepository {
     private final List<City> cities;
 
     private int[][] prices;
-
-    private final CSVParser parser = new CSVParser();
 
 
     public CsvFlightsRepository(String fileName) {
@@ -77,52 +74,46 @@ public class CsvFlightsRepository implements FlightsRepository {
     private void loadData() throws FlightsFinderException {
 
 
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            InputStream inputStream = classLoader.getResourceAsStream(fileName);
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(fileName);
 
-            if (inputStream == null) {
-                throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_IO);
-            }
-
-            List<String> lines = new BufferedReader(new InputStreamReader(inputStream))
-                    .lines()
-                    .collect(Collectors.toList());
-
-            if (lines.size()>0){
-                for (String cityString : parser.parseLine(lines.get(0))) {
-                    cities.add(new City(cityString.trim()));
-                }
-            } else{
-                throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_NO_HEADER);
-            }
-
-            if (lines.size() != cities.size()+1){
-                throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
-            }
-
-            this.prices = new int[cities.size()][cities.size()];
-
-            // now process flights
-            for (int i=1; i< lines.size();i++){
-                String [] flightsStr = parser.parseLine(lines.get(i));
-                if (flightsStr.length != cities.size()){
-                    throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
-                }
-                for (int j=0; j< flightsStr.length; j++){
-                    try {
-                        this.prices[i-1][j] = Integer.parseInt(flightsStr[j].trim());
-                    } catch (NumberFormatException e) {
-                        throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
-                    }
-                }
-
-            }
-
-
-        } catch (IOException e) {
+        if (inputStream == null) {
             throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_IO);
         }
+
+        List<String> lines = new BufferedReader(new InputStreamReader(inputStream))
+                .lines()
+                .collect(Collectors.toList());
+
+        if (lines.size()>0){
+            for (String cityString : lines.get(0).split(",")) {
+                cities.add(new City(cityString.trim()));
+            }
+        } else{
+            throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_NO_HEADER);
+        }
+
+        if (lines.size() != cities.size()+1){
+            throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
+        }
+
+        this.prices = new int[cities.size()][cities.size()];
+
+        // now process flights
+        for (int i=1; i< lines.size();i++){
+            String [] flightsStr = lines.get(i).split(",");
+            if (flightsStr.length != cities.size()){
+                throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
+            }
+            for (int j=0; j< flightsStr.length; j++){
+                try {
+                    this.prices[i-1][j] = Integer.parseInt(flightsStr[j].trim());
+                } catch (NumberFormatException e) {
+                    throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_LINES);
+                }
+            }
+        }
+
         loaded = true;
     }
 }
