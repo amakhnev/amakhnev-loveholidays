@@ -72,11 +72,11 @@ Alternatively with maven installed,go to project folder and execute `mvn package
 This would trigger tests and creation of flightsfinder-1.0-SNAPSHOT.jar file in {project home}/target directory
 
 ### How to run
-####prerequisites:
+#### prerequisites:
 * JRE installed, version 11+. Can check with running `java --version`
 * flightsfinder-1.0-SNAPSHOT.jar has been created (see previous section) 
 
-####execution:
+#### execution:
 App can be triggered by executing follow command in Windows ... 
 ```
 ./list-flight-paths.cmd "[location1]" "[location2]"
@@ -90,7 +90,7 @@ Alternatively, follow command can be triggered to call app explicitly
 ```
 java -cp .\target\flightsfinder-1.0-SNAPSHOT.jar com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp "[location1]" "[location2]"
 ```
-####running from IDE
+#### running from IDE
 Execute method main in `com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp` class, adding list of cities as input parameters in the running configuration
 
 
