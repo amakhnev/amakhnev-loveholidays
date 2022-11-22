@@ -49,7 +49,7 @@ A few notes on the test:
 ## Additional assumptions
 - input data needs to be validated, i.e. city name should present in corresponding DAO
 - in case of any error only code and meaningful message should be shown to user
-- no path found is an error
+- no path found is an error and should be indicated by giving message to user
 - price is integer
 - routes output is sorted by price
 
@@ -59,11 +59,13 @@ A few notes on the test:
 ### Architecture and decisions explained
 Application consists of follow layers:
 - FlightsFinderApp - command line application which receives input data as parameters / writes output to system console and handles received checked exceptions.
-- 
-- Original problem does not sound complex, hence decision was made to complete without using of dependency injection frameworks, i.e. Spring. However even on this small project it's evident DI framework would benefit in better wiring (between usage of service bean, factory can be simplified) so if I would do it again I prefer to use Spring.
+- Repository layer is responsible for getting cities and prices data. Price matrix is stored in csv file with header being names of cities, alternative implementation of repository are possible.
+- Service layer contains business logic of searching all available routes via recursion with intermediate storage. Assumption of limiting number of cities to 8 makes it possible, it will not work with scaling number of cities post 30-40 with each-to-each-next flights possible
+- Original problem does not sound complex, hence decision was made to complete without using of dependency injection frameworks, i.e. Spring. However even on this small project it's evident DI framework would benefit in better wiring so if I would do it again I prefer to use Spring.
+- Unit test coverage is 100% classes, 93% lines.  
 
 ### How to build
-Open project in IDE of choice as Java Maven project, execute maven `package` goal.
+Open project in IDE of choice as Java Maven project, execute maven `package` goal. It will run unit tests and export jar file.
 
 Alternatively with maven installed,go to project folder and execute `mvn package` command
 
@@ -75,14 +77,18 @@ This would trigger tests and creation of flightsfinder-1.0-SNAPSHOT.jar file in 
 * flightsfinder-1.0-SNAPSHOT.jar has been created (see previous section) 
 
 ####execution:
-App can be triggered by executing follow command (Windows) 
+App can be triggered by executing follow command in Windows ... 
 ```
 ./list-flight-paths.cmd "[location1]" "[location2]"
+```
+... or in Linux
+```
+ ./list-flight-paths.sh "[location1]" "[location2]"
 ```
 
 Alternatively, follow command can be triggered to call app explicitly
 ```
-java -cp .\target\flightsfinder-1.0-SNAPSHOT.jar com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp {name of departure city} {name of destination city}
+java -cp .\target\flightsfinder-1.0-SNAPSHOT.jar com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp "[location1]" "[location2]"
 ```
 ####running from IDE
 Execute method main in `com.amakhnev.loveholidays.flightsfinder.FlightsFinderApp` class, adding list of cities as input parameters in the running configuration
