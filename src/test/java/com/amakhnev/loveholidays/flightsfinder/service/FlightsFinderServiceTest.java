@@ -2,6 +2,7 @@ package com.amakhnev.loveholidays.flightsfinder.service;
 
 import com.amakhnev.loveholidays.flightsfinder.entity.City;
 import com.amakhnev.loveholidays.flightsfinder.entity.Route;
+import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException;
 import com.amakhnev.loveholidays.flightsfinder.repository.CsvFlightsRepository;
 import com.amakhnev.loveholidays.flightsfinder.repository.FlightsRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,14 +20,14 @@ class FlightsFinderServiceTest {
     City destination;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws FlightsFinderException {
         repository = new CsvFlightsRepository("testflights.csv");
         service = new FlightsFinderService(repository);
     }
 
 
     @Test
-    void whenOneDestinationAvailable_whenOneRouteShouldBeReturned() throws Exception{
+    void whenOneDestinationAvailable_thenOneRouteShouldBeReturned() throws Exception{
         origin = repository.getCity("City 3").orElseThrow();
         destination = repository.getCity("City 4").orElseThrow();
 
@@ -40,25 +41,9 @@ class FlightsFinderServiceTest {
 
     }
 
-    @Test
-    void whenTwoDifferentRoutesAvailable_whenTwoRouteShouldBeReturnedCheapestFirst() throws Exception{
-        origin = repository.getCity("City 2").orElseThrow();
-        destination = repository.getCity("City 4").orElseThrow();
-
-        List<Route> routes = service.getRoutes(origin,destination);
-
-        assertEquals(2,routes.size());
-        // City 2 -> City 4 , price 50
-        assertEquals(2,routes.get(0).getRoute().size());
-        assertEquals(50,routes.get(0).getPrice());
-        // City 2 -> City 3 -> City 4 , price 110
-        assertEquals(3,routes.get(1).getRoute().size());
-        assertEquals(110,routes.get(1).getPrice());
-
-    }
 
     @Test
-    void whenNoRoutesExists_whenEmptyArrayShouldBeReturned() throws Exception{
+    void whenNoRoutesExists_thenEmptyArrayShouldBeReturned() throws Exception{
         origin = repository.getCity("City 4").orElseThrow();
         destination = repository.getCity("City 4").orElseThrow();
 
@@ -69,7 +54,7 @@ class FlightsFinderServiceTest {
     }
 
     @Test
-    void whenBadRouteSelected_whenEmptyArrayShouldBeReturned() throws Exception{
+    void whenBadRouteSelected_thenEmptyArrayShouldBeReturned() throws Exception{
         origin = repository.getCity("City 4").orElseThrow();
         destination = repository.getCity("City 1").orElseThrow();
 
@@ -78,4 +63,15 @@ class FlightsFinderServiceTest {
         assertEquals(0,routes.size());
 
     }
+
+    @Test
+    void whenTwoDifferentRoutesAvailable_thenCheapestBeReturned () throws FlightsFinderException {
+        origin = repository.getCity("City 2").orElseThrow();
+        destination = repository.getCity("City 4").orElseThrow();
+
+        Route route = service.getCheapest(origin, destination).get();
+
+        assertEquals(50, route.getPrice());
+    }
+
 }

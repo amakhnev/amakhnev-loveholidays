@@ -27,7 +27,14 @@ public class FlightsFinderApp {
 
 
     protected void process(String[] args, Writer output) throws IOException {
-        FlightsRepository repository = new CsvFlightsRepository("flights.csv");
+        FlightsRepository repository = null;
+        try {
+            repository = new CsvFlightsRepository("flights.csv");
+        } catch (FlightsFinderException e) {
+            output.write(String.format(ERROR_TEXT_TEMPLATE, e.getCode(), e.getMessage()));
+            output.flush();
+            return;
+        }
         FlightsFinderService service = new FlightsFinderService(repository);
         process(repository, service, args, output);
     }

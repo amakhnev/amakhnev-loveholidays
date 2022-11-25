@@ -3,11 +3,10 @@ package com.amakhnev.loveholidays.flightsfinder.service;
 import com.amakhnev.loveholidays.flightsfinder.entity.City;
 import com.amakhnev.loveholidays.flightsfinder.entity.Route;
 import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderException;
+import com.amakhnev.loveholidays.flightsfinder.exceptions.FlightsFinderExceptionEnum;
 import com.amakhnev.loveholidays.flightsfinder.repository.FlightsRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class FlightsFinderService {
 
@@ -21,9 +20,34 @@ public class FlightsFinderService {
 
         List<Route> routes = new ArrayList<>();
 
-        getRoutesFor(routes,new Route(origin),destination);
+        HashMap<City,Route> bestRoutes = new HashMap<>();
+        routes.add(new Route(origin));
 
-        routes.sort(Comparator.comparingInt(Route::getPrice));
+        while(!routes.isEmpty()){
+            Route current = routes.remove(0);
+            City last = current.getRoute().get(current.getRoute().size()-1);
+            for (City next : repository.getDestinations(last)) {
+                if (current.getRoute().contains(next)){ // not cycle
+                    continue;
+                }
+                Route newRoute = new Route(current);
+                newRoute.addDestination(next,repository.getPrice(last,next).get());
+                if (!bestRoutes.containsKey(next) || bestRoutes.get(next).getPrice() > newRoute.getPrice()){
+                    bestRoutes.put(next,newRoute);
+                }
+                if (!next.equals(destination)){
+                    routes.add(newRoute);
+                }
+            }
+        }
+
+        if (bestRoutes.containsKey(destination)){
+            routes.add(bestRoutes.get(destination));
+        }
+
+//        getRoutesFor(routes,new Route(origin),destination);
+//
+//        routes.sort(Comparator.comparingInt(Route::getPrice));
 
         return routes;
     }
@@ -34,7 +58,7 @@ public class FlightsFinderService {
         for (City city :
                 repository.getDestinations(currentDestination)) {
             Route newRoute = new Route(currentRoute);
-            newRoute.addDestination(city, repository.getPrice(currentDestination,city));
+            newRoute.addDestination(city, repository.getPrice(currentDestination,city).orElseThrow(()->new FlightsFinderException(FlightsFinderExceptionEnum.SERVICE_WRONG_ARGS)));
             if (city.equals(finalDestination)){
                 routes.add(newRoute);
             } else {
@@ -45,6 +69,11 @@ public class FlightsFinderService {
     }
 
 
+
+    public Optional<Route> getCheapest(City origin, City destination) throws FlightsFinderException {
+        List<Route> routes =getRoutes(origin,destination);
+        return routes.isEmpty()?Optional.empty():Optional.of(routes.get(0));
+    }
 
 
 }

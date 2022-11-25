@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CsvFlightsRepository implements FlightsRepository {
 
@@ -23,25 +24,25 @@ public class CsvFlightsRepository implements FlightsRepository {
     private int[][] prices;
 
 
-    public CsvFlightsRepository(String fileName) {
+    public CsvFlightsRepository(String fileName) throws FlightsFinderException {
         this.fileName = fileName;
         cities = new ArrayList<>();
+
+        if (!loaded) {
+            loadData();
+        }
     }
 
 
     @Override
-    public List<City> getCities() throws FlightsFinderException {
-        if (!loaded) {
-            loadData();
-        }
+    public List<City> getCities() {
+
         return cities;
     }
 
     @Override
-    public Optional<City> getCity(String name) throws FlightsFinderException {
-        if (!loaded) {
-            loadData();
-        }
+    public Optional<City> getCity(String name){
+
         City city = new City(name);
         if (cities.contains(city)){
             return Optional.of(city);
@@ -50,25 +51,30 @@ public class CsvFlightsRepository implements FlightsRepository {
     }
 
     @Override
-    public List<City> getDestinations(City origin) throws FlightsFinderException {
-        if (!loaded) {
-            loadData();
-        }
-        return cities.stream()
-                    .skip(cities.indexOf(origin)+1)
-                    .collect(Collectors.toList());
+    public List<City> getDestinations(City origin){
+
+
+        int idx = cities.indexOf(origin);
+
+        return idx==-1?
+                new ArrayList<>():
+                IntStream.range(0,cities.size())
+                        .filter(i-> idx!=i && prices[idx][i]>0)
+                        .mapToObj(i->cities.get(i))
+                        .collect(Collectors.toList());
+//                cities.stream()
+//                    .skip(cities.indexOf(origin)+1)
+//                    .collect(Collectors.toList());
     }
 
     @Override
-    public int getPrice(City origin, City destination) throws FlightsFinderException {
-        if (!loaded) {
-            loadData();
-        }
+    public Optional<Integer> getPrice(City origin, City destination)  {
 
-        if (cities.indexOf(origin) >= cities.indexOf(destination)){
-            throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_ARGS);
-        }
-        return prices[cities.indexOf(origin)][cities.indexOf(destination)];
+
+//        if (cities.indexOf(origin) == cities.indexOf(destination)){
+//            throw new FlightsFinderException(FlightsFinderExceptionEnum.REPO_WRONG_ARGS);
+//        }
+        return prices[cities.indexOf(origin)][cities.indexOf(destination)]>0?Optional.of(prices[cities.indexOf(origin)][cities.indexOf(destination)]):Optional.empty();
     }
 
     private void loadData() throws FlightsFinderException {

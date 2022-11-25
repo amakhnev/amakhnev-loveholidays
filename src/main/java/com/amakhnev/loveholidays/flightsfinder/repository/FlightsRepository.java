@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface FlightsRepository {
 
-    List<City> getCities() throws FlightsFinderException;
+    List<City> getCities();
 
-    Optional<City> getCity(String name) throws FlightsFinderException;
+    Optional<City> getCity(String name);
 
-    List<City> getDestinations(City origin) throws FlightsFinderException;
+    List<City> getDestinations(City origin);
 
-    int getPrice(City origin, City destination) throws FlightsFinderException;
+    Optional<Integer> getPrice(City origin, City destination);
 }
